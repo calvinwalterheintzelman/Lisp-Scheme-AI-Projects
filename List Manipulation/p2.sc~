@@ -1,0 +1,56 @@
+;;;'((((a #f)) #t) (((a #t)) #f)) is an example output (note the ')
+
+;;; phi can be the following:
+;;; a boolean
+;;; a variable
+;;; (not phi0)
+;;; (and phi1 phi2 ... phin)
+;;; (or phi1 phi2 ... phin)
+
+(define (delete_dups A)
+ (cond ((null? A)
+	A)
+       ((member (first A) (rest A))
+	(delete_dups (rest A)))
+       (else (cons (first A) (delete_dups (rest A))))))
+
+(define (set-union A B)
+ (cond ((null? A)
+	(delete_dups B))
+       (else (delete_dups (cons (first A) (set-union (rest A) B))))))
+
+(define (flatten lists)
+ (cond ((null? lists)
+	lists)
+       ((null? (first lists))
+	(rest lists))
+       ((list? (first lists))
+	;;;(cons (rest (first c)) (cons (first (first c)) (rest c)))
+	(flatten (cons (rest (first lists))
+		       (cons (first (first lists)) (rest lists)))))
+       (else
+	(cons (first lists) (flatten (rest lists)))))) ; this is not being executed for some reason? try it again
+
+(define (parameters phi)
+ (cond ((null? phi)
+	'())
+       ((boolean? phi)
+	'())
+       ((symbol? phi)
+	phi)
+       ((list? phi)
+	(cond ((eq? (first phi) 'not)
+	       4)
+	      ((eq? (first phi) 'and)
+	       (reduce set-union (map list(map parameters (rest phi))) (list)))
+	      ((eq? (first phi) 'or)
+	       6)
+	      (else
+	       (panic "Invalid expression!"))))
+       (else
+	(panic "Invalid expression!"))))
+	
+	
+
+(define (truth-table phi)
+ (parameters phi))

@@ -1,0 +1,6 @@
+(define (delete_dups A)
+ (cond ((null? A)
+	A)
+       ((member (first A) (rest A))
+	(delete_dups (rest A)))
+       (else (cons (first A) (delete_dups (rest A))))))
